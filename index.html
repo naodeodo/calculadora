@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora con Brython</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.11.1/brython.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.11.1/brython_stdlib.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .calc {
+            background: #ffffff;
+            width: 310px;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 10px;
+            border: 1px solid #aaa;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background: #e0e0e0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #d0d0d0;
+        }
+        .igual {
+            background: #4CAF50;
+            color: white;
+        }
+        .igual:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+
+<body onload="brython()">
+
+<div class="calc">
+    <input id="pantalla" type="text" readonly>
+
+    <div class="buttons">
+        <button class="key" data-value="7">7</button>
+        <button class="key" data-value="8">8</button>
+        <button class="key" data-value="9">9</button>
+        <button class="key" data-value="/">÷</button>
+
+        <button class="key" data-value="4">4</button>
+        <button class="key" data-value="5">5</button>
+        <button class="key" data-value="6">6</button>
+        <button class="key" data-value="*">×</button>
+
+        <button class="key" data-value="1">1</button>
+        <button class="key" data-value="2">2</button>
+        <button class="key" data-value="3">3</button>
+        <button class="key" data-value="-">−</button>
+
+        <button class="key" data-value="0">0</button>
+        <button class="key" data-value=".">.</button>
+        <button id="clear">C</button>
+        <button class="key" data-value="+">+</button>
+
+        <button id="equals" class="igual" style="grid-column: span 4;">=</button>
+    </div>
+</div>
+
+<script type="text/python">
+from browser import document
+
+# Handler para botones con clase "key"
+def manejar_click(ev):
+    v = ev.target.attrs.get('data-value', '')
+    document["pantalla"].value += v
+
+def borrar(ev=None):
+    document["pantalla"].value = ""
+
+def calcular(ev=None):
+    pantalla = document["pantalla"]
+    try:
+        # Evalúa la expresión aritmética (nota: eval() puede ser peligroso si se permite entrada arbitraria)
+        pantalla.value = str(eval(pantalla.value))
+    except Exception:
+        pantalla.value = "Error"
+
+# Enlazamos los botones después de que Brython arranque
+for btn in document.select('.key'):
+    btn.bind('click', manejar_click)
+
+document['clear'].bind('click', borrar)
+document['equals'].bind('click', calcular)
+</script>
+
+</body>
+</html>
